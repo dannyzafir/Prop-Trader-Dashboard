@@ -1,0 +1,2081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prop Firm Account Manager</title>
+  <!-- Custom CSS for sleek UI/UX -->
+  <style>
+    /* Base layout */
+    body {
+      background: #F3F4F6;
+      font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
+      color: #1F2937;
+      line-height: 1.5;
+    }
+    .container {
+      max-width: 1100px;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 0 1rem;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    .header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #4338CA;
+    }
+    .card {
+      background: #FFFFFF;
+      border-radius: 0.75rem;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #1F2937;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #D1D5DB;
+      border-radius: 0.5rem;
+      background: #F9FAFB;
+      color: #1F2937;
+      font-size: 0.875rem;
+    }
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #6366F1;
+      box-shadow: 0 0 0 1px #6366F1;
+    }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .button:active {
+      transform: translateY(1px);
+    }
+    .button-primary {
+      background: #6366F1;
+      color: #FFFFFF;
+    }
+    .button-primary:hover {
+      background: #4F46E5;
+    }
+    .button-secondary {
+      background: #6B7280;
+      color: #FFFFFF;
+    }
+    .button-secondary:hover {
+      background: #4B5563;
+    }
+    .button-warning {
+      background: #F59E0B;
+      color: #FFFFFF;
+    }
+    .button-warning:hover {
+      background: #D97706;
+    }
+    .button-danger {
+      background: #DC2626;
+      color: #FFFFFF;
+    }
+    .button-danger:hover {
+      background: #B91C1C;
+    }
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .table th {
+      background: #F3F4F6;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: #6B7280;
+      text-align: left;
+      padding: 0.5rem;
+      border-bottom: 2px solid #E5E7EB;
+    }
+    .table td {
+      font-size: 0.875rem;
+      padding: 0.5rem;
+      border-bottom: 1px solid #E5E7EB;
+      color: #374151;
+    }
+    .table tr:nth-child(even) {
+      background: #FAFAFA;
+    }
+    .table tr:hover {
+      background: #F3F4F6;
+    }
+    .summary {
+      margin-bottom: 1rem;
+      font-size: 0.875rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .summary div {
+      background: #F9FAFB;
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.375rem;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    .progress {
+      width: 100%;
+      background: #E5E7EB;
+      border-radius: 0.375rem;
+      height: 0.5rem;
+      overflow: hidden;
+    }
+    .progress-inner {
+      height: 100%;
+      transition: width 0.3s ease;
+    }
+    .progress-positive {
+      background: #10B981;
+    }
+    .progress-negative {
+      background: #EF4444;
+    }
+    .suggestion {
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .suggestion-critical {
+      color: #B91C1C;
+    }
+    .suggestion-warning {
+      color: #D97706;
+    }
+    .timeline {
+      overflow-x: auto;
+      margin-top: 0.5rem;
+    }
+    .timeline .legend {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.75rem;
+      font-size: 0.75rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .legend-box {
+      width: 1rem;
+      height: 1rem;
+      border-radius: 0.25rem;
+      margin-right: 0.25rem;
+    }
+
+    /* Legend colors for state classes (light mode) */
+    .legend-box.timeline-state-active {
+      background: #3B82F6;
+    }
+    .legend-box.timeline-state-eval {
+      background: #6366F1;
+    }
+    .legend-box.timeline-state-payout {
+      background: #F59E0B;
+    }
+    .legend-box.timeline-state-parked {
+      background: #9CA3AF;
+    }
+    .legend-box.timeline-state-inactive {
+      background: #D1D5DB;
+    }
+    .timeline-header {
+      display: flex;
+    }
+    .timeline-header .label {
+      width: 6rem;
+    }
+    .timeline-header .week {
+      width: 3rem;
+      text-align: center;
+      font-size: 0.75rem;
+      color: #6B7280;
+      border-right: 1px dotted #D1D5DB;
+    }
+    .timeline-row {
+      display: flex;
+    }
+    .timeline-row .account-label {
+      width: 6rem;
+      font-size: 0.75rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .timeline-cell {
+      width: 3rem;
+      height: 0.75rem;
+      border-right: 1px dotted #E5E7EB;
+    }
+    .timeline-active {
+      background: #6366F1;
+    }
+    .timeline-paused {
+      background: #E5E7EB;
+    }
+
+    /* Timeline colors by account type */
+    /* Timeline colors by account state */
+    /* Active or Push state */
+    .timeline-state-active {
+      background: #3B82F6; /* blue for active/push */
+    }
+    /* Evaluation or Phase 2 state */
+    .timeline-state-eval {
+      background: #6366F1; /* purple for evaluation/phase2 */
+    }
+    /* Payout Secured state */
+    .timeline-state-payout {
+      background: #F59E0B; /* golden yellow for payout */
+    }
+    /* Parked state */
+    .timeline-state-parked {
+      background: #9CA3AF; /* muted gray for parked */
+    }
+    /* Inactive state */
+    .timeline-state-inactive {
+      background: #D1D5DB; /* light gray for inactive */
+    }
+    /* Current week highlight */
+    .timeline-current-week {
+      background: rgba(253, 224, 71, 0.4); /* soft yellow highlight */
+    }
+
+    /* Drag handle icon */
+    .drag-handle {
+      cursor: move;
+      user-select: none;
+      padding-right: 0.25rem;
+      color: #9CA3AF;
+    }
+
+    /* Modal styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      background: #FFFFFF;
+      padding: 2rem;
+      border-radius: 0.75rem;
+      max-width: 600px;
+      width: 90%;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      position: relative;
+    }
+    .modal-content h3 {
+      margin-top: 0;
+      font-size: 1.25rem;
+      margin-bottom: 0.75rem;
+    }
+    .modal-close {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      cursor: pointer;
+      font-size: 1.25rem;
+      color: #6B7280;
+    }
+
+    /* Dark mode styles */
+    body.dark {
+      background: #1F2937;
+      color: #F9FAFB;
+    }
+    body.dark .card {
+      background: #374151;
+      color: #F9FAFB;
+    }
+    body.dark .table th {
+      background: #4B5563;
+      color: #D1D5DB;
+      border-bottom: 1px solid #6B7280;
+    }
+    body.dark .table td {
+      color: #F3F4F6;
+      border-bottom: 1px solid #4B5563;
+    }
+    body.dark .table tr:nth-child(even) {
+      background: #4B5563;
+    }
+    body.dark .table tr:hover {
+      background: #4B5563;
+    }
+    body.dark .progress {
+      background: #4B5563;
+    }
+    body.dark .progress-positive {
+      background: #10B981;
+    }
+    body.dark .progress-negative {
+      background: #EF4444;
+    }
+    body.dark .button-primary {
+      background: #4F46E5;
+    }
+    body.dark .button-primary:hover {
+      background: #4338CA;
+    }
+    body.dark .button-secondary {
+      background: #6B7280;
+    }
+    body.dark .button-secondary:hover {
+      background: #4B5563;
+    }
+    body.dark .button-warning {
+      background: #D97706;
+    }
+    body.dark .button-warning:hover {
+      background: #B45309;
+    }
+    body.dark .button-danger {
+      background: #B91C1C;
+    }
+    body.dark .button-danger:hover {
+      background: #9B1B1B;
+    }
+    body.dark .legend-box.timeline-state-active {
+      background: #3B82F6;
+    }
+    body.dark .legend-box.timeline-state-eval {
+      background: #6366F1;
+    }
+    body.dark .legend-box.timeline-state-payout {
+      background: #D97706;
+    }
+    body.dark .legend-box.timeline-state-parked {
+      background: #6B7280;
+    }
+    body.dark .legend-box.timeline-state-inactive {
+      background: #4B5563;
+    }
+    body.dark .legend-box.timeline-current-week {
+      background: rgba(253, 224, 71, 0.6);
+    }
+
+    /* Small icon buttons for row reordering and offset shifting */
+    .icon-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.25rem;
+      height: 1.25rem;
+      border-radius: 0.375rem;
+      background: #E5E7EB;
+      color: #374151;
+      font-size: 0.75rem;
+      cursor: pointer;
+      margin-right: 0.25rem;
+      transition: background 0.2s;
+    }
+    .icon-btn:hover {
+      background: #D1D5DB;
+    }
+
+    /* Account type badges */
+    .type-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.375rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #FFFFFF;
+    }
+    .type-eval { background: #6366F1; }
+    .type-express { background: #3B82F6; }
+    .type-live { background: #10B981; }
+
+    /* Utility classes used in inline templates (for backward compatibility) */
+    .border { border: 1px solid #D1D5DB; }
+    .border-gray-300 { border-color: #D1D5DB; }
+    .rounded { border-radius: 0.375rem; }
+    .w-20 { width: 5rem; }
+    .w-24 { width: 6rem; }
+    .w-16 { width: 4rem; }
+    .w-12 { width: 3rem; }
+    .px-1 { padding-left: 0.25rem; padding-right: 0.25rem; }
+    .py-0\.5 { padding-top: 0.125rem; padding-bottom: 0.125rem; }
+    .text-xs { font-size: 0.75rem; }
+    .bg-white { background: #FFFFFF; }
+    .bg-gray-200 { background: #E5E7EB; }
+    .bg-gray-300 { background: #D1D5DB; }
+    .bg-purple-500 { background: #6366F1; }
+    .bg-red-400 { background: #F87171; }
+    .bg-green-500 { background: #10B981; }
+    .text-red-700 { color: #B91C1C; }
+    .text-red-600 { color: #E11D48; }
+
+    /* Performance dashboard styles */
+    .performance-chart {
+      margin-top: 0.5rem;
+    }
+    .bar-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.25rem;
+    }
+    .bar-label {
+      width: 6rem;
+      font-size: 0.75rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .bar-container {
+      flex: 1;
+      background: #E5E7EB;
+      border-radius: 0.25rem;
+      height: 0.5rem;
+      margin-right: 0.5rem;
+      overflow: hidden;
+    }
+    .bar-inner {
+      height: 100%;
+    }
+    .bar-inner-eval { background: #6366F1; }
+    .bar-inner-express { background: #3B82F6; }
+    .bar-inner-live { background: #10B981; }
+    .bar-inner-negative { background: #EF4444; }
+    .bar-value {
+      font-size: 0.75rem;
+      width: 3rem;
+      text-align: right;
+    }
+    .ai-insights {
+      margin-top: 0.75rem;
+    }
+    .ai-insights h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    .ai-insights ul {
+      list-style: disc;
+      margin-left: 1rem;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+    }
+    .text-yellow-600 { color: #D97706; }
+
+    /* Type performance section */
+    .type-performance {
+      margin-top: 0.75rem;
+    }
+
+    /* Pie chart container */
+    .pie-charts {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+    .pie-chart {
+      display: flex;
+      align-items: center;
+      font-size: 0.75rem;
+    }
+    .pie-chart svg {
+      margin-right: 0.5rem;
+    }
+    .pie-legend {
+      display: flex;
+      flex-direction: column;
+      font-size: 0.75rem;
+    }
+    .pie-legend-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.25rem;
+    }
+    .pie-legend-box {
+      width: 0.75rem;
+      height: 0.75rem;
+      margin-right: 0.25rem;
+      border-radius: 0.125rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>Prop Trader Dashboard</h1>
+      <div>
+        <button id="save-data" class="button button-secondary" style="margin-right:0.5rem;">Save</button>
+        <button id="load-data" class="button button-secondary" style="margin-right:0.5rem;">Load</button>
+        <button id="settings-button" class="button button-secondary" style="margin-right:0.5rem;">Settings</button>
+        <button id="toggle-mode" class="button button-secondary" style="margin-right:0.5rem;">Dark Mode</button>
+        <button id="reset-week" class="button button-secondary" style="margin-right:0.5rem;" title="Reset current week to W1">Reset Week</button>
+        <button id="help-button" class="button button-secondary">Help</button>
+      </div>
+    </header>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal-overlay" style="display:none;">
+      <div class="modal-content">
+        <span id="settings-close" class="modal-close">×</span>
+        <h3>Settings</h3>
+        <div class="grid">
+          <div class="form-group">
+            <label>Risk per Trade (%)</label>
+            <input id="setting-risk" type="number" step="0.1" value="1" />
+          </div>
+          <div class="form-group">
+            <label>Payout Threshold (%)</label>
+            <input id="setting-payout" type="number" step="0.1" value="3" />
+          </div>
+          <!-- Type-specific profit targets -->
+          <div class="form-group">
+            <label>Payout Threshold (Eval) %</label>
+            <input id="setting-payout-eval" type="number" step="0.1" value="3" />
+          </div>
+          <div class="form-group">
+            <label>Payout Threshold (Express) %</label>
+            <input id="setting-payout-express" type="number" step="0.1" value="3" />
+          </div>
+          <div class="form-group">
+            <label>Payout Threshold (Live) %</label>
+            <input id="setting-payout-live" type="number" step="0.1" value="3" />
+          </div>
+          <div class="form-group">
+            <label>Default Active Weeks</label>
+            <input id="setting-active-weeks" type="number" value="4" />
+          </div>
+          <div class="form-group">
+            <label>Default Off Weeks</label>
+            <input id="setting-off-weeks" type="number" value="1" />
+          </div>
+          <!-- Type-specific rotation cycles -->
+          <div class="form-group">
+            <label>Active Weeks (Eval)</label>
+            <input id="setting-active-weeks-eval" type="number" value="4" />
+          </div>
+          <div class="form-group">
+            <label>Off Weeks (Eval)</label>
+            <input id="setting-off-weeks-eval" type="number" value="1" />
+          </div>
+          <div class="form-group">
+            <label>Active Weeks (Express)</label>
+            <input id="setting-active-weeks-express" type="number" value="4" />
+          </div>
+          <div class="form-group">
+            <label>Off Weeks (Express)</label>
+            <input id="setting-off-weeks-express" type="number" value="1" />
+          </div>
+          <div class="form-group">
+            <label>Active Weeks (Live)</label>
+            <input id="setting-active-weeks-live" type="number" value="4" />
+          </div>
+          <div class="form-group">
+            <label>Off Weeks (Live)</label>
+            <input id="setting-off-weeks-live" type="number" value="1" />
+          </div>
+          <div class="form-group">
+            <label>Display Weeks</label>
+            <input id="setting-display-weeks" type="number" value="18" />
+          </div>
+          <div class="form-group">
+            <label>Max Daily Drawdown (%)</label>
+            <input id="setting-daily-draw" type="number" value="5" />
+          </div>
+          <div class="form-group">
+            <label>Max Total Drawdown (%)</label>
+            <input id="setting-total-draw" type="number" value="10" />
+          </div>
+        </div>
+        <button id="save-settings" class="button button-primary" style="margin-top:1rem;">Save Settings</button>
+      </div>
+    </div>
+
+    <!-- Add Account Card -->
+    <div class="card add-card">
+      <h2 class="card-title">Add New Account</h2>
+      <div class="grid">
+        <div class="form-group">
+          <label>Account ID</label>
+          <input id="add-id" type="text" />
+        </div>
+        <div class="form-group">
+          <label>Funding ($)</label>
+          <input id="add-funding" type="number" value="100000" />
+        </div>
+        <div class="form-group">
+          <label>State</label>
+          <select id="add-state">
+            <option value="Evaluation">Evaluation</option>
+            <option value="Active">Active</option>
+            <option value="Push">Push</option>
+            <option value="Parked">Parked</option>
+            <option value="Payout Secured">Payout Secured</option>
+            <option value="Phase 2">Phase 2</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Account Type</label>
+          <select id="add-type">
+            <option value="Evaluation">Evaluation</option>
+            <option value="Express">Express</option>
+            <option value="Live">Live</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Start Offset (weeks)</label>
+          <input id="add-offset" type="number" min="0" value="0" />
+        </div>
+        <!-- Custom profit target for this account (overrides type-specific settings) -->
+        <div class="form-group">
+          <label>Target (%) <span style="font-weight:normal; color:#6B7280; font-size:0.75rem;">(optional)</span></label>
+          <input id="add-target" type="number" step="0.1" placeholder="leave blank for default" />
+        </div>
+
+        <!-- Evaluation cost for this account (optional) -->
+        <div class="form-group">
+          <label>Eval Cost ($)</label>
+          <input id="add-cost" type="number" step="0.01" placeholder="0" />
+        </div>
+
+        <!-- Prop firm name -->
+        <div class="form-group">
+          <label>Firm</label>
+          <input id="add-firm" type="text" placeholder="e.g. TopStep" />
+        </div>
+
+        <!-- Evaluation pass target for evaluation accounts -->
+        <div class="form-group">
+          <label>Eval Pass Target (%) <span style="font-weight:normal; color:#6B7280; font-size:0.75rem;">(optional)</span></label>
+          <input id="add-eval-target" type="number" step="0.1" placeholder="leave blank" />
+        </div>
+      </div>
+      <button id="add-account" class="button button-primary" style="margin-top:1rem;">Add Account</button>
+    </div>
+
+    <!-- Accounts Card -->
+    <div class="card accounts-card">
+      <div class="flex" style="display:flex; justify-content:space-between; align-items:center;">
+        <h2 class="card-title" style="margin-bottom:0;">Accounts</h2>
+        <div id="current-week-display" style="font-size:0.875rem; color:#6B7280;"></div>
+      </div>
+      <div id="summary" class="summary"></div>
+      <table id="accounts-table" class="table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>ID</th>
+            <th>State</th>
+            <th>Type</th>
+            <th>Firm</th>
+            <th>Funding</th>
+            <th>Profit %</th>
+            <th>Weeks Active</th>
+            <th>Offset (wk)</th>
+            <th>Target %</th>
+            <th>Eval Target %</th>
+            <th>Eval Cost ($)</th>
+            <th>Progress</th>
+            <th>Risk/Trade ($)</th>
+            <th>Profit Target ($)</th>
+            <th>Daily Loss Limit ($)</th>
+            <th>Total Drawdown ($)</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="accounts-body"></tbody>
+      </table>
+    </div>
+
+    <!-- Timeline Card -->
+    <div class="card timeline-card">
+      <h2 class="card-title">Rotation Schedule</h2>
+      <div id="timeline-container" class="timeline"></div>
+    </div>
+
+    <!-- Performance Dashboard Card -->
+    <div class="card performance-card">
+      <h2 class="card-title">Performance Dashboard</h2>
+      <div id="performance-content"></div>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="help-modal" class="modal-overlay" style="display:none;">
+      <div class="modal">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+          <h3 style="margin:0;">How to Use This App</h3>
+          <span id="help-close" style="cursor:pointer; font-size:1.25rem;">×</span>
+        </div>
+        <div class="modal-content" id="help-content">
+          <p>This dashboard helps you manage multiple prop firm accounts using a rotation strategy.</p>
+          <ul style="margin-left:1rem; list-style:disc;">
+            <li>Use the <strong>Settings</strong> button to open the settings panel and configure risk per trade, payout thresholds and rotation cycles for each account type.</li>
+            <li>Add accounts in the <strong>Add New Account</strong> card. Specify the account ID, funding size, state, type (Evaluation/Express/Live), start offset in weeks, optional custom target, evaluation pass target, evaluation cost and firm name.</li>
+            <li>The <strong>Accounts</strong> table lists your accounts with editable fields. Drag rows by the handle to reorder them. Update profit using +1% or −1% buttons. Edit or delete accounts as needed.</li>
+            <li>Set the current week by clicking any week label (W1, W2, …) at the top of the rotation schedule. The highlighted week updates accordingly.</li>
+            <li>The <strong>Rotation Schedule</strong> shows when each account is active or paused. Click a cell in a row to set the start offset for that account. Active cells are coloured by account type and paused cells are grey.</li>
+            <li>The <strong>Performance Dashboard</strong> summarises profits, offers AI insights and predictions, and displays bar and pie charts for quick analysis. You’ll also see personalised suggestions for each account.</li>
+            <li>Use the <strong>Dark Mode</strong> button to switch between light and dark themes.</li>
+          </ul>
+          <p>Happy trading! Tailor the settings and targets to match each prop firm’s rules and your own strategy.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Available account states
+    const STATE_OPTIONS = ['Evaluation','Active','Push','Parked','Payout Secured','Phase 2','Inactive'];
+
+    // Account types for classification
+    const ACCOUNT_TYPES = ['Evaluation','Express','Live'];
+
+    // Helper: get type-specific active weeks
+    function getTypeActiveWeeks(type, settings) {
+      if (type === 'Express') return settings.activeWeeksExpress || settings.maxWeeks;
+      if (type === 'Live') return settings.activeWeeksLive || settings.maxWeeks;
+      // default to evaluation
+      return settings.activeWeeksEval || settings.maxWeeks;
+    }
+    // Helper: get type-specific off weeks
+    function getTypeOffWeeks(type, settings) {
+      if (type === 'Express') return settings.offWeeksExpress || settings.offWeeks;
+      if (type === 'Live') return settings.offWeeksLive || settings.offWeeks;
+      return settings.offWeeksEval || settings.offWeeks;
+    }
+    // Simple helper to get settings from the input fields
+    function getSettings() {
+      return {
+        risk: parseFloat(document.getElementById('setting-risk').value) || 0,
+        payoutThreshold: parseFloat(document.getElementById('setting-payout').value) || 0,
+        // Type-specific payout thresholds
+        payoutEval: parseFloat(document.getElementById('setting-payout-eval').value) || 0,
+        payoutExpress: parseFloat(document.getElementById('setting-payout-express').value) || 0,
+        payoutLive: parseFloat(document.getElementById('setting-payout-live').value) || 0,
+        // default rotation cycle used if no type-specific values provided
+        maxWeeks: parseInt(document.getElementById('setting-active-weeks').value) || 0,
+        offWeeks: parseInt(document.getElementById('setting-off-weeks').value) || 0,
+        // type-specific rotation cycles
+        activeWeeksEval: parseInt(document.getElementById('setting-active-weeks-eval').value) || 0,
+        offWeeksEval: parseInt(document.getElementById('setting-off-weeks-eval').value) || 0,
+        activeWeeksExpress: parseInt(document.getElementById('setting-active-weeks-express').value) || 0,
+        offWeeksExpress: parseInt(document.getElementById('setting-off-weeks-express').value) || 0,
+        activeWeeksLive: parseInt(document.getElementById('setting-active-weeks-live').value) || 0,
+        offWeeksLive: parseInt(document.getElementById('setting-off-weeks-live').value) || 0,
+        displayWeeks: parseInt(document.getElementById('setting-display-weeks').value) || 0,
+        maxDaily: parseFloat(document.getElementById('setting-daily-draw').value) || 0,
+        maxTotal: parseFloat(document.getElementById('setting-total-draw').value) || 0
+      };
+    }
+
+    // Accounts array
+    let accounts = [];
+
+    // Variables for row drag and drop
+    let draggingIndex = null;
+
+    // Row drag start handler
+    function rowDragStart(e) {
+      draggingIndex = parseInt(this.dataset.index);
+    }
+
+    // Row drag over handler (needed to allow drop)
+    function rowDragOver(e) {
+      e.preventDefault();
+    }
+
+    // Row drop handler
+    function rowDrop(e) {
+      e.preventDefault();
+      const dropIndex = parseInt(this.dataset.index);
+      if (draggingIndex === null || draggingIndex === dropIndex || draggingIndex < 0) return;
+      const moved = accounts.splice(draggingIndex, 1)[0];
+      accounts.splice(dropIndex, 0, moved);
+      draggingIndex = null;
+      renderTable();
+    }
+
+    // Track current week index for timeline highlighting
+    let currentWeekCount = parseInt(localStorage.getItem('currentWeekCount')) || 0;
+    // Track last week for weeksActive updates (initialised to current week)
+    let lastWeekCount = currentWeekCount;
+    // Whether the user is dragging across week headers
+    let weekDragActive = false;
+
+    // Timeline drag removed: start offset is set via clicking a cell
+
+    // Add account handler
+    document.getElementById('add-account').addEventListener('click', () => {
+      const id = document.getElementById('add-id').value.trim();
+      const funding = parseFloat(document.getElementById('add-funding').value);
+      const state = document.getElementById('add-state').value;
+      const accountType = document.getElementById('add-type') ? document.getElementById('add-type').value : 'Evaluation';
+      const startOffset = parseInt(document.getElementById('add-offset').value) || 0;
+      const targetInput = document.getElementById('add-target').value;
+      const targetPercentVal = targetInput === '' ? null : parseFloat(targetInput);
+      const evalCostInput = document.getElementById('add-cost').value;
+      const evalCostVal = evalCostInput === '' ? null : parseFloat(evalCostInput);
+      const firmVal = document.getElementById('add-firm').value.trim();
+      const evalTargetInput = document.getElementById('add-eval-target').value;
+      const evalTargetVal = evalTargetInput === '' ? null : parseFloat(evalTargetInput);
+      if (!id || isNaN(funding)) {
+        alert('Please enter valid account ID and funding');
+        return;
+      }
+      // Check for duplicate
+      if (accounts.some(acc => acc.id === id)) {
+        alert('Account ID already exists');
+        return;
+      }
+      accounts.push({
+        id,
+        funding,
+        state,
+        accountType,
+        targetPercent: !isNaN(targetPercentVal) ? targetPercentVal : undefined,
+        profit: 0,
+        weeksActive: 0,
+        startOffset: startOffset,
+        editing: false
+        , evalCost: !isNaN(evalCostVal) ? evalCostVal : undefined
+        , firm: firmVal || undefined
+        , evalTarget: !isNaN(evalTargetVal) ? evalTargetVal : undefined
+      });
+      document.getElementById('add-id').value = '';
+      document.getElementById('add-offset').value = '';
+      document.getElementById('add-target').value = '';
+      document.getElementById('add-cost').value = '';
+      document.getElementById('add-firm').value = '';
+      document.getElementById('add-eval-target').value = '';
+      renderTable();
+    });
+
+    // Save settings
+    document.getElementById('save-settings').addEventListener('click', () => {
+      localStorage.setItem('propSettings', JSON.stringify(getSettings()));
+      alert('Settings saved');
+      // Re-render the table and timeline when settings change
+      renderTable();
+    });
+
+    // Save data
+    document.getElementById('save-data').addEventListener('click', () => {
+      localStorage.setItem('propAccounts', JSON.stringify(accounts));
+      // Save current week index
+      localStorage.setItem('currentWeekCount', currentWeekCount);
+      alert('Accounts saved');
+    });
+
+    // Load data
+    document.getElementById('load-data').addEventListener('click', () => {
+      const storedAcc = localStorage.getItem('propAccounts');
+      if (storedAcc) {
+        accounts = JSON.parse(storedAcc);
+        renderTable();
+      }
+      const storedSet = localStorage.getItem('propSettings');
+      if (storedSet) {
+        const s = JSON.parse(storedSet);
+        document.getElementById('setting-risk').value = s.risk;
+        document.getElementById('setting-payout').value = s.payoutThreshold;
+        document.getElementById('setting-payout-eval').value = s.payoutEval !== undefined ? s.payoutEval : s.payoutThreshold;
+        document.getElementById('setting-payout-express').value = s.payoutExpress !== undefined ? s.payoutExpress : s.payoutThreshold;
+        document.getElementById('setting-payout-live').value = s.payoutLive !== undefined ? s.payoutLive : s.payoutThreshold;
+        document.getElementById('setting-active-weeks').value = s.maxWeeks;
+        document.getElementById('setting-off-weeks').value = s.offWeeks;
+        // Apply type-specific settings, falling back to default if undefined
+        document.getElementById('setting-active-weeks-eval').value = s.activeWeeksEval !== undefined ? s.activeWeeksEval : s.maxWeeks;
+        document.getElementById('setting-off-weeks-eval').value = s.offWeeksEval !== undefined ? s.offWeeksEval : s.offWeeks;
+        document.getElementById('setting-active-weeks-express').value = s.activeWeeksExpress !== undefined ? s.activeWeeksExpress : s.maxWeeks;
+        document.getElementById('setting-off-weeks-express').value = s.offWeeksExpress !== undefined ? s.offWeeksExpress : s.offWeeks;
+        document.getElementById('setting-active-weeks-live').value = s.activeWeeksLive !== undefined ? s.activeWeeksLive : s.maxWeeks;
+        document.getElementById('setting-off-weeks-live').value = s.offWeeksLive !== undefined ? s.offWeeksLive : s.offWeeks;
+        document.getElementById('setting-display-weeks').value = s.displayWeeks;
+        document.getElementById('setting-daily-draw').value = s.maxDaily;
+        document.getElementById('setting-total-draw').value = s.maxTotal;
+      }
+      // Restore current week count
+      const storedWeek = localStorage.getItem('currentWeekCount');
+      if (storedWeek !== null) {
+        currentWeekCount = parseInt(storedWeek);
+      }
+      alert('Data loaded');
+    });
+
+    // Dark mode toggle
+    let darkMode = localStorage.getItem('propDarkMode') === 'true';
+    function applyDarkMode() {
+      document.body.classList.toggle('dark', darkMode);
+      const toggleBtn = document.getElementById('toggle-mode');
+      if (toggleBtn) {
+        toggleBtn.textContent = darkMode ? 'Light Mode' : 'Dark Mode';
+      }
+    }
+    document.getElementById('toggle-mode').addEventListener('click', () => {
+      darkMode = !darkMode;
+      localStorage.setItem('propDarkMode', darkMode);
+      applyDarkMode();
+    });
+    applyDarkMode();
+
+    // Reset current week to W1 (index 0)
+    const resetWeekBtn = document.getElementById('reset-week');
+    if (resetWeekBtn) {
+      resetWeekBtn.addEventListener('click', () => {
+        setCurrentWeek(0);
+      });
+    }
+
+    // Settings modal handlers
+    const settingsModal = document.getElementById('settings-modal');
+    document.getElementById('settings-button').addEventListener('click', () => {
+      if (settingsModal) settingsModal.style.display = 'flex';
+    });
+    document.getElementById('settings-close').addEventListener('click', () => {
+      if (settingsModal) settingsModal.style.display = 'none';
+    });
+    // Close settings modal when clicking outside of the content
+    if (settingsModal) {
+      settingsModal.addEventListener('click', (e) => {
+        if (e.target === settingsModal) {
+          settingsModal.style.display = 'none';
+        }
+      });
+    }
+
+    // Help modal handlers
+    const helpModal = document.getElementById('help-modal');
+    document.getElementById('help-button').addEventListener('click', () => {
+      helpModal.style.display = 'flex';
+    });
+    document.getElementById('help-close').addEventListener('click', () => {
+      helpModal.style.display = 'none';
+    });
+    helpModal.addEventListener('click', (e) => {
+      if (e.target === helpModal) {
+        helpModal.style.display = 'none';
+      }
+    });
+
+    // Handler to update current week when clicking on timeline header
+    // Function to update weeksActive based on new current week
+    function updateWeeksActive(newWeek) {
+      // Compute number of weeks advanced (assume one step)
+      const delta = (newWeek !== lastWeekCount) ? 1 : 0;
+      if (delta <= 0) return;
+      accounts.forEach(acc => {
+        const settings = getSettings();
+        const startOffset = (typeof acc.startOffset === 'number') ? acc.startOffset : 0;
+        const typeActive = getTypeActiveWeeks(acc.accountType, settings);
+        const typeOff = getTypeOffWeeks(acc.accountType, settings);
+        const cycleLength = (typeActive + typeOff) > 0 ? (typeActive + typeOff) : 1;
+        const pos = (newWeek - startOffset) % cycleLength;
+        if (pos >= 0 && pos < typeActive) {
+          // Only increment if account is in active state and not parked/inactive
+          if (acc.state === 'Active' || acc.state === 'Push') {
+            acc.weeksActive += delta;
+          }
+        }
+      });
+      lastWeekCount = newWeek;
+    }
+
+    function setCurrentWeek(wk) {
+      // update weeksActive first
+      updateWeeksActive(wk);
+      currentWeekCount = wk;
+      localStorage.setItem('currentWeekCount', currentWeekCount);
+      // automatically expand display range if needed
+      renderTable();
+    }
+
+    // Render the accounts table
+    function renderTable() {
+      const tbody = document.getElementById('accounts-body');
+      tbody.innerHTML = '';
+      const settings = getSettings();
+      accounts.forEach((acc, idx) => {
+        const tr = document.createElement('tr');
+        // compute risk metrics
+        const riskTrade = acc.funding * settings.risk / 100;
+        // determine account-specific or type-specific payout threshold
+        let targetPercent = acc.targetPercent;
+        if (targetPercent === undefined || targetPercent === null || targetPercent === '') {
+          if (acc.accountType === 'Express') {
+            targetPercent = settings.payoutExpress || settings.payoutThreshold;
+          } else if (acc.accountType === 'Live') {
+            targetPercent = settings.payoutLive || settings.payoutThreshold;
+          } else {
+            targetPercent = settings.payoutEval || settings.payoutThreshold;
+          }
+        }
+        const profitTarget = acc.funding * targetPercent / 100;
+        const dailyLimit = acc.funding * settings.maxDaily / 100;
+        const totalLimit = acc.funding * settings.maxTotal / 100;
+        // Determine AI suggestion and category for this account
+        let suggestion = '';
+        let suggestionType = '';
+        const negProfit = -acc.profit;
+        // Drawdown warnings based on percentage loss
+        if (negProfit >= settings.maxTotal) {
+          suggestion = 'Bin account (total drawdown exceeded)';
+          suggestionType = 'critical';
+        } else if (negProfit >= settings.maxDaily) {
+          suggestion = 'Hit daily loss limit – consider pausing';
+          suggestionType = 'critical';
+        } else {
+          // Evaluation pass check: only for evaluation accounts
+          if (acc.accountType === 'Evaluation' && acc.evalTarget && acc.evalTarget > 0 && acc.profit >= acc.evalTarget) {
+            suggestion = 'Eval passed – move to next phase';
+            suggestionType = 'critical';
+          } else if (acc.profit >= targetPercent) {
+            suggestion = 'Lock payout & park';
+            suggestionType = 'critical';
+          } else {
+            // Determine type-specific cycle thresholds
+            const typeActiveWeeks = getTypeActiveWeeks(acc.accountType, settings);
+            const typeOffWeeks = getTypeOffWeeks(acc.accountType, settings);
+            // Suggest parking after active weeks are completed while still active/push
+            if (typeActiveWeeks > 0 && acc.weeksActive >= typeActiveWeeks && (acc.state === 'Active' || acc.state === 'Push')) {
+              suggestion = 'Park account';
+              suggestionType = 'warning';
+            }
+            // Suggest cycle completion after full active + off cycle length
+            if ((typeActiveWeeks + typeOffWeeks) > 0 && acc.weeksActive >= (typeActiveWeeks + typeOffWeeks)) {
+              suggestion = suggestion ? suggestion + '; cycle complete – reset or replace' : 'Cycle complete – reset or replace';
+              suggestionType = 'warning';
+            }
+            // Negative performance flagged when drawdown persists for several weeks
+            if (acc.profit < 0 && acc.weeksActive >= 2) {
+              suggestion = suggestion ? suggestion + '; performance negative' : 'Performance negative – consider pausing';
+              suggestionType = 'warning';
+            }
+          }
+        }
+        // Persist suggestion on the account for later AI summaries
+        acc.suggestion = suggestion;
+        acc.suggestionType = suggestionType;
+        // Determine progress percent relative to targetPercent
+        let progressPercent = 0;
+        if (targetPercent > 0) {
+          progressPercent = (acc.profit / targetPercent) * 100;
+        }
+        const progressWidth = Math.min(100, Math.max(0, progressPercent)).toFixed(0);
+        // Build row based on editing state
+        if (acc.editing) {
+          // Editable row with inputs and dropdowns
+          tr.innerHTML = '';
+          // Drag handle (non-functional in edit mode)
+          let tdHandleEdit = document.createElement('td');
+          tdHandleEdit.innerHTML = `<span class="drag-handle">⋮⋮</span>`;
+          tr.appendChild(tdHandleEdit);
+          // ID cell
+          let tdId = document.createElement('td');
+          tdId.innerHTML = `<input type="text" value="${acc.id}" class="border border-gray-300 rounded w-20 px-1 py-0.5 text-xs" oninput="editField(event, ${idx}, 'id')">`;
+          tr.appendChild(tdId);
+          // State cell
+          let tdState = document.createElement('td');
+          const optionsHTML = STATE_OPTIONS.map(opt => `<option value="${opt}" ${opt === acc.state ? 'selected' : ''}>${opt}</option>`).join('');
+          tdState.innerHTML = `<select class="bg-white border border-gray-300 rounded px-1 py-0.5 text-xs" onchange="editField(event, ${idx}, 'state')">${optionsHTML}</select>`;
+          tr.appendChild(tdState);
+          // Type cell
+          let tdType = document.createElement('td');
+          const typeOptions = ACCOUNT_TYPES.map(opt => `<option value="${opt}" ${opt === acc.accountType ? 'selected' : ''}>${opt}</option>`).join('');
+          tdType.innerHTML = `<select class="bg-white border border-gray-300 rounded px-1 py-0.5 text-xs" onchange="editField(event, ${idx}, 'accountType')">${typeOptions}</select>`;
+          tr.appendChild(tdType);
+          // Firm cell (editable)
+          let tdFirmEdit = document.createElement('td');
+          tdFirmEdit.innerHTML = `<input type="text" value="${acc.firm || ''}" class="border border-gray-300 rounded w-20 px-1 py-0.5 text-xs" oninput="editField(event, ${idx}, 'firm')">`;
+          tr.appendChild(tdFirmEdit);
+          // Funding cell
+          let tdFunding = document.createElement('td');
+          tdFunding.innerHTML = `<input type="number" value="${acc.funding}" class="border border-gray-300 rounded w-24 px-1 py-0.5 text-xs" oninput="editField(event, ${idx}, 'funding')">`;
+          tr.appendChild(tdFunding);
+          // Profit cell
+          let tdProfit = document.createElement('td');
+          tdProfit.innerHTML = `<input type="number" step="0.1" value="${acc.profit.toFixed(2)}" class="border border-gray-300 rounded w-16 px-1 py-0.5 text-xs" oninput="editField(event, ${idx}, 'profit')">`;
+          tr.appendChild(tdProfit);
+          // Weeks active
+          let tdWeeks = document.createElement('td');
+          tdWeeks.innerHTML = `<input type="number" min="0" value="${acc.weeksActive}" class="border border-gray-300 rounded w-12 px-1 py-0.5 text-xs" oninput="editField(event, ${idx}, 'weeksActive')">`;
+          tr.appendChild(tdWeeks);
+          // Offset cell
+          let tdOffset = document.createElement('td');
+          tdOffset.innerHTML = `<input type="number" min="0" value="${acc.startOffset || 0}" class="border border-gray-300 rounded w-12 px-1 py-0.5 text-xs" oninput="editField(event, ${idx}, 'startOffset')">`;
+          tr.appendChild(tdOffset);
+          // Target percent cell (editable)
+          let tdTargetPctEdit = document.createElement('td');
+          const tVal = (acc.targetPercent !== undefined && acc.targetPercent !== null) ? acc.targetPercent : '';
+          tdTargetPctEdit.innerHTML = `<input type="number" step="0.1" value="${tVal}" class="border border-gray-300 rounded w-16 px-1 py-0.5 text-xs" oninput="editField(event, ${idx}, 'targetPercent')">`;
+          tr.appendChild(tdTargetPctEdit);
+          // Eval target cell (editable)
+          let tdEvalTargetEdit = document.createElement('td');
+          const evalVal = (acc.evalTarget !== undefined && acc.evalTarget !== null) ? acc.evalTarget : '';
+          tdEvalTargetEdit.innerHTML = `<input type="number" step="0.1" value="${evalVal}" class="border border-gray-300 rounded w-16 px-1 py-0.5 text-xs" oninput="editField(event, ${idx}, 'evalTarget')">`;
+          tr.appendChild(tdEvalTargetEdit);
+          // Eval cost cell (editable)
+          let tdEvalCostEdit = document.createElement('td');
+          const costVal = (acc.evalCost !== undefined && acc.evalCost !== null) ? acc.evalCost : '';
+          tdEvalCostEdit.innerHTML = `<input type="number" step="0.01" value="${costVal}" class="border border-gray-300 rounded w-16 px-1 py-0.5 text-xs" oninput="editField(event, ${idx}, 'evalCost')">`;
+          tr.appendChild(tdEvalCostEdit);
+          // Progress
+          let tdProgress = document.createElement('td');
+          tdProgress.innerHTML = `<div class="progress"><div class="progress-inner ${acc.profit >= 0 ? 'progress-positive' : 'progress-negative'}" style="width:${progressWidth}%"></div></div>`;
+          tr.appendChild(tdProgress);
+          // Risk/trade
+          let tdRisk = document.createElement('td');
+          tdRisk.textContent = riskTrade.toFixed(2);
+          tr.appendChild(tdRisk);
+          // Profit target
+          let tdTarget = document.createElement('td');
+          tdTarget.textContent = profitTarget.toFixed(2);
+          tr.appendChild(tdTarget);
+          // Daily limit
+          let tdDaily = document.createElement('td');
+          tdDaily.textContent = dailyLimit.toFixed(2);
+          tr.appendChild(tdDaily);
+          // Total limit
+          let tdTotal = document.createElement('td');
+          tdTotal.textContent = totalLimit.toFixed(2);
+          tr.appendChild(tdTotal);
+          // Actions
+          let tdActions = document.createElement('td');
+          tdActions.innerHTML = `
+            <button class="button button-primary" style="font-size:0.75rem; margin-right:0.25rem;" onclick="saveEdit(${idx})">Save</button>
+            <button class="button button-secondary" style="font-size:0.75rem;" onclick="cancelEdit(${idx})">Cancel</button>
+          `;
+          tr.appendChild(tdActions);
+        } else {
+          // Normal row with summary and actions
+          tr.innerHTML = '';
+          // Drag handle cell
+          let tdHandle = document.createElement('td');
+          tdHandle.innerHTML = `<span class="drag-handle">⋮⋮</span>`;
+          tr.appendChild(tdHandle);
+          // ID
+          let tdId = document.createElement('td');
+          tdId.textContent = acc.id;
+          tr.appendChild(tdId);
+          // State
+          let tdState = document.createElement('td');
+          const optionsHTML2 = STATE_OPTIONS.map(opt => `<option value="${opt}" ${opt === acc.state ? 'selected' : ''}>${opt}</option>`).join('');
+          tdState.innerHTML = `<select class="bg-white border border-gray-300 rounded px-1 py-0.5 text-xs" onchange="changeStateSelect(event, ${idx})">${optionsHTML2}</select>`;
+          tr.appendChild(tdState);
+          // Type badge
+          let tdType = document.createElement('td');
+          const typeClass = acc.accountType === 'Express' ? 'type-express' : (acc.accountType === 'Live' ? 'type-live' : 'type-eval');
+          tdType.innerHTML = `<span class="type-badge ${typeClass}">${acc.accountType}</span>`;
+          tr.appendChild(tdType);
+          // Firm
+          let tdFirm = document.createElement('td');
+          tdFirm.textContent = acc.firm || '';
+          tr.appendChild(tdFirm);
+          // Funding
+          let tdFunding = document.createElement('td');
+          tdFunding.textContent = acc.funding.toLocaleString();
+          tr.appendChild(tdFunding);
+          // Profit
+          let tdProfit = document.createElement('td');
+          tdProfit.textContent = acc.profit.toFixed(2);
+          tr.appendChild(tdProfit);
+          // Weeks active
+          let tdWeeks = document.createElement('td');
+          tdWeeks.textContent = acc.weeksActive;
+          tr.appendChild(tdWeeks);
+          // Offset display
+          let tdOffset2 = document.createElement('td');
+          tdOffset2.textContent = acc.startOffset || 0;
+          tr.appendChild(tdOffset2);
+          // Target % display
+          let tdTargetPctDisp = document.createElement('td');
+          // Determine account-specific or fallback target for display
+          let dispTarget;
+          if (acc.targetPercent !== undefined && acc.targetPercent !== null && acc.targetPercent !== '') {
+            dispTarget = acc.targetPercent.toFixed(1);
+          } else {
+            // fallback to type-specific threshold
+            if (acc.accountType === 'Express') {
+              dispTarget = (settings.payoutExpress || settings.payoutThreshold).toFixed(1);
+            } else if (acc.accountType === 'Live') {
+              dispTarget = (settings.payoutLive || settings.payoutThreshold).toFixed(1);
+            } else {
+              dispTarget = (settings.payoutEval || settings.payoutThreshold).toFixed(1);
+            }
+          }
+          tdTargetPctDisp.textContent = dispTarget;
+          tr.appendChild(tdTargetPctDisp);
+          // Eval Target % display
+          let tdEvalTarget = document.createElement('td');
+          let dispEvalTarget;
+          if (acc.evalTarget !== undefined && acc.evalTarget !== null && acc.evalTarget !== '') {
+            dispEvalTarget = acc.evalTarget.toFixed(1);
+          } else {
+            dispEvalTarget = '';
+          }
+          tdEvalTarget.textContent = dispEvalTarget;
+          tr.appendChild(tdEvalTarget);
+          // Eval Cost display
+          let tdEvalCost = document.createElement('td');
+          let dispEvalCost;
+          if (acc.evalCost !== undefined && acc.evalCost !== null && acc.evalCost !== '') {
+            dispEvalCost = parseFloat(acc.evalCost).toFixed(2);
+          } else {
+            dispEvalCost = '';
+          }
+          tdEvalCost.textContent = dispEvalCost;
+          tr.appendChild(tdEvalCost);
+          // Progress bar
+          let tdProgress = document.createElement('td');
+          tdProgress.innerHTML = `<div class="progress"><div class="progress-inner ${acc.profit >= 0 ? 'progress-positive' : 'progress-negative'}" style="width:${progressWidth}%"></div></div>`;
+          tr.appendChild(tdProgress);
+          // Risk/trade
+          let tdRisk = document.createElement('td');
+          tdRisk.textContent = riskTrade.toFixed(2);
+          tr.appendChild(tdRisk);
+          // Profit target
+          let tdTarget = document.createElement('td');
+          tdTarget.textContent = profitTarget.toFixed(2);
+          tr.appendChild(tdTarget);
+          // Daily limit
+          let tdDaily = document.createElement('td');
+          tdDaily.textContent = dailyLimit.toFixed(2);
+          tr.appendChild(tdDaily);
+          // Total limit
+          let tdTotal = document.createElement('td');
+          tdTotal.textContent = totalLimit.toFixed(2);
+          tr.appendChild(tdTotal);
+          // Actions with reorder and offset controls
+          let tdActions = document.createElement('td');
+          tdActions.innerHTML = `
+            <button class="button button-warning" style="font-size:0.75rem; margin-right:0.25rem;" onclick="updateProfit(${idx}, 1)">+1%</button>
+            <button class="button button-danger" style="font-size:0.75rem; margin-right:0.25rem;" onclick="updateProfit(${idx}, -1)">-1%</button>
+            <button class="button button-secondary" style="font-size:0.75rem; margin-right:0.25rem;" onclick="editAccount(${idx})">Edit</button>
+            <button class="button button-secondary" style="font-size:0.75rem;" onclick="deleteAccount(${idx})">Del</button>
+          `;
+          tr.appendChild(tdActions);
+        }
+        // Attach drag attributes and events for row reorder (only if not editing)
+        if (!acc.editing) {
+          tr.dataset.index = idx;
+          tr.draggable = true;
+          tr.addEventListener('dragstart', rowDragStart);
+          tr.addEventListener('dragover', rowDragOver);
+          tr.addEventListener('drop', rowDrop);
+        }
+        tbody.appendChild(tr);
+      });
+      // Compute summary metrics
+      const summaryDiv = document.getElementById('summary');
+      const total = accounts.length;
+      const countActive = accounts.filter(a => a.state === 'Active' || a.state === 'Push').length;
+      const countParked = accounts.filter(a => a.state === 'Parked').length;
+      const countPayout = accounts.filter(a => a.state === 'Payout Secured').length;
+      const totalFunding = accounts.reduce((sum, a) => sum + a.funding, 0);
+      const totalPayout = accounts.reduce((sum, a) => {
+        // Determine account-specific or type-specific target
+        let accTarget;
+        if (a.targetPercent !== undefined && a.targetPercent !== null && a.targetPercent !== '') {
+          accTarget = a.targetPercent;
+        } else {
+          if (a.accountType === 'Express') {
+            accTarget = settings.payoutExpress || settings.payoutThreshold;
+          } else if (a.accountType === 'Live') {
+            accTarget = settings.payoutLive || settings.payoutThreshold;
+          } else {
+            accTarget = settings.payoutEval || settings.payoutThreshold;
+          }
+        }
+        if (a.state === 'Payout Secured' && a.profit >= accTarget) {
+          return sum + (a.funding * accTarget / 100);
+        }
+        return sum;
+      }, 0);
+      // Compute total evaluation costs by summing evalCost on each account (if provided)
+      const totalEvalCost = accounts.reduce((sum, a) => sum + (a.evalCost || 0), 0);
+      const netProfit = totalPayout - totalEvalCost;
+      // Compute type counts
+      const countEval = accounts.filter(a => a.accountType === 'Evaluation').length;
+      const countExpress = accounts.filter(a => a.accountType === 'Express').length;
+      const countLive = accounts.filter(a => a.accountType === 'Live').length;
+      // Compute risk-reward ratio: total positive profits vs absolute total negative profits
+      const totalPositive = accounts.filter(a => a.profit > 0).reduce((s, a) => s + a.profit, 0);
+      const totalNegative = accounts.filter(a => a.profit < 0).reduce((s, a) => s + Math.abs(a.profit), 0);
+      const rrRatio = totalNegative > 0 ? (totalPositive / totalNegative).toFixed(2) : 'N/A';
+
+      summaryDiv.innerHTML = `
+        <div><strong>Accounts:</strong> ${total}</div>
+        <div><strong>Active/Push:</strong> ${countActive}</div>
+        <div><strong>Parked:</strong> ${countParked}</div>
+        <div><strong>Payout:</strong> ${countPayout}</div>
+        <div><strong>Eval:</strong> ${countEval}</div>
+        <div><strong>Express:</strong> ${countExpress}</div>
+        <div><strong>Live:</strong> ${countLive}</div>
+        <div><strong>Funding:</strong> $${totalFunding.toLocaleString()}</div>
+        <div><strong>Eval Costs:</strong> $${totalEvalCost.toFixed(2)}</div>
+        <div><strong>Total Payouts:</strong> $${totalPayout.toFixed(2)}</div>
+        <div><strong>Net:</strong> $${netProfit.toFixed(2)}</div>
+        <div><strong>RR Ratio:</strong> ${rrRatio}</div>
+      `;
+      // Update the current week display in the accounts header
+      const weekDisplay = document.getElementById('current-week-display');
+      if (weekDisplay) {
+        const settings = getSettings();
+        const totalWeeks = settings.displayWeeks > 0 ? settings.displayWeeks : 18;
+        const displayWeekNum = (currentWeekCount % totalWeeks) + 1;
+        weekDisplay.textContent = 'Current Week: W' + displayWeekNum;
+      }
+      // After rendering the table, update the timeline and performance dashboard
+      renderTimeline();
+      renderPerformance();
+    }
+
+    // Render the rotation schedule timeline
+    function renderTimeline() {
+      const container = document.getElementById('timeline-container');
+      if (!container) return;
+      container.innerHTML = '';
+      const settings = getSettings();
+      // Dynamically expand the number of displayed weeks if current week exceeds range
+      let totalWeeks = settings.displayWeeks > 0 ? settings.displayWeeks : 18;
+      if (currentWeekCount + 3 > totalWeeks) {
+        totalWeeks = currentWeekCount + 3;
+      }
+      // Add legend
+      const legend = document.createElement('div');
+      legend.className = 'legend';
+      legend.innerHTML = `
+        <div class="flex items-center"><div class="legend-box timeline-state-active"></div><span>Active/Push</span></div>
+        <div class="flex items-center"><div class="legend-box timeline-state-eval"></div><span>Evaluation/Phase 2</span></div>
+        <div class="flex items-center"><div class="legend-box timeline-state-payout"></div><span>Payout</span></div>
+        <div class="flex items-center"><div class="legend-box timeline-state-parked"></div><span>Parked</span></div>
+        <div class="flex items-center"><div class="legend-box timeline-state-inactive"></div><span>Inactive</span></div>
+        <div class="flex items-center"><div class="legend-box timeline-current-week"></div><span>Current Week</span></div>
+      `;
+      container.appendChild(legend);
+      // Header row with week labels
+      const headerRow = document.createElement('div');
+      headerRow.className = 'timeline-header';
+      const emptyLabel = document.createElement('div');
+      emptyLabel.className = 'label';
+      headerRow.appendChild(emptyLabel);
+      for (let w = 1; w <= totalWeeks; w++) {
+        const weekCell = document.createElement('div');
+        weekCell.className = 'week';
+        weekCell.textContent = 'W' + w;
+        weekCell.dataset.weekIndex = w - 1;
+        // Clicking sets current week
+        weekCell.addEventListener('click', () => setCurrentWeek(w - 1));
+        headerRow.appendChild(weekCell);
+      }
+      // Add drag functionality to header row
+      const headerRectHandler = () => {};
+      // Setup drag handlers on the header row
+      (function() {
+        const rowEl = headerRow;
+        // Helper to set current week based on mouse X
+        function updateWeekFromEvent(e) {
+          const rect = rowEl.getBoundingClientRect();
+          // width of label column (first child)
+          const labelWidth = rowEl.children[0].getBoundingClientRect().width;
+          const cellWidth =  rowEl.children[1].getBoundingClientRect().width;
+          let x = e.clientX - rect.left - labelWidth;
+          // Determine index
+          let index = Math.floor(x / cellWidth);
+          if (index < 0) index = 0;
+          const settings = getSettings();
+          let tw = settings.displayWeeks > 0 ? settings.displayWeeks : 18;
+          if (currentWeekCount + 3 > tw) {
+            tw = currentWeekCount + 3;
+          }
+          if (index >= tw) index = tw - 1;
+          setCurrentWeek(index);
+        }
+        // Start drag
+        rowEl.addEventListener('mousedown', (e) => {
+          if (!e.target.classList.contains('week')) return;
+          weekDragActive = true;
+          updateWeekFromEvent(e);
+        });
+        // Move drag
+        rowEl.addEventListener('mousemove', (e) => {
+          if (weekDragActive) {
+            updateWeekFromEvent(e);
+          }
+        });
+        // End drag
+        rowEl.addEventListener('mouseup', () => {
+          weekDragActive = false;
+        });
+        // End drag if mouse leaves header
+        rowEl.addEventListener('mouseleave', () => {
+          weekDragActive = false;
+        });
+        document.addEventListener('mouseup', () => {
+          weekDragActive = false;
+        });
+      })();
+
+      // Highlight the current week cell in the header
+      const highlightHeaderIndex = (currentWeekCount % totalWeeks);
+      // headerRow children: first child is the empty label, subsequent are week cells
+      Array.from(headerRow.children).forEach((cell, idx) => {
+        if (idx === highlightHeaderIndex + 1) {
+          cell.classList.add('timeline-current-week');
+        }
+      });
+      container.appendChild(headerRow);
+      // Rows for each account
+      accounts.forEach((acc, index) => {
+        const row = document.createElement('div');
+        row.className = 'timeline-row';
+        const label = document.createElement('div');
+        label.className = 'account-label';
+        label.textContent = acc.id;
+        row.appendChild(label);
+        const startOffset = (typeof acc.startOffset === 'number') ? acc.startOffset : index;
+        const highlightIndex = (currentWeekCount % totalWeeks);
+        for (let week = 0; week < totalWeeks; week++) {
+          const cell = document.createElement('div');
+          cell.className = 'timeline-cell';
+          // Determine cell state (active or paused) and apply account-type-specific color for active
+          if (week < startOffset) {
+            cell.classList.add('timeline-paused');
+          } else {
+            // Determine type-specific active and off weeks
+            const typeActive = getTypeActiveWeeks(acc.accountType, settings);
+            const typeOff = getTypeOffWeeks(acc.accountType, settings);
+            // fallback to default cycle if both are zero
+            const cycleLength = (typeActive + typeOff) > 0 ? (typeActive + typeOff) : 1;
+            const posInCycle = (week - startOffset) % cycleLength;
+            if (posInCycle < typeActive) {
+              // Choose color by account state for active periods
+              const st = acc.state;
+              if (st === 'Active' || st === 'Push') {
+                cell.classList.add('timeline-state-active');
+              } else if (st === 'Payout Secured') {
+                cell.classList.add('timeline-state-payout');
+              } else if (st === 'Parked') {
+                cell.classList.add('timeline-state-parked');
+              } else if (st === 'Inactive') {
+                cell.classList.add('timeline-state-inactive');
+              } else if (st === 'Phase 2' || st === 'Evaluation') {
+                cell.classList.add('timeline-state-eval');
+              } else {
+                cell.classList.add('timeline-state-eval');
+              }
+            } else {
+              cell.classList.add('timeline-paused');
+            }
+          }
+          // Highlight current week column
+          if (week === highlightIndex) {
+            cell.classList.add('timeline-current-week');
+          }
+          // Attach dataset and click event to set start offset when clicked
+          cell.dataset.row = index;
+          cell.dataset.week = week;
+          cell.addEventListener('click', () => {
+            const rowIndex = parseInt(cell.dataset.row);
+            const weekIndex = parseInt(cell.dataset.week);
+            if (!isNaN(rowIndex) && !isNaN(weekIndex)) {
+              accounts[rowIndex].startOffset = weekIndex;
+              renderTable();
+            }
+          });
+          row.appendChild(cell);
+        }
+        container.appendChild(row);
+      });
+    }
+
+    // Render performance dashboard with charts and AI insights
+    function renderPerformance() {
+      const container = document.getElementById('performance-content');
+      if (!container) return;
+      container.innerHTML = '';
+      const settings = getSettings();
+      if (accounts.length === 0) {
+        container.innerHTML = '<p style="font-size:0.875rem; color:#6B7280;">No accounts yet.</p>';
+        return;
+      }
+      // Compute metrics
+      const totalProfit = accounts.reduce((sum, a) => sum + a.profit, 0);
+      const avgProfit = totalProfit / accounts.length;
+      // compute by type
+      function avgProfitByType(type) {
+        const arr = accounts.filter(a => a.accountType === type);
+        if (!arr.length) return 0;
+        return arr.reduce((s, a) => s + a.profit, 0) / arr.length;
+      }
+      const avgEval = avgProfitByType('Evaluation');
+      const avgExpress = avgProfitByType('Express');
+      const avgLive = avgProfitByType('Live');
+      // Top and bottom performers
+      let maxAcc = accounts[0];
+      let minAcc = accounts[0];
+      accounts.forEach(a => {
+        if (a.profit > maxAcc.profit) maxAcc = a;
+        if (a.profit < minAcc.profit) minAcc = a;
+      });
+      // Build bar chart
+      let chartHTML = '<div class="performance-chart">';
+      accounts.forEach(a => {
+        // width relative to account-specific or type-specific payout threshold
+        let t;
+        if (a.targetPercent !== undefined && a.targetPercent !== null && a.targetPercent !== '') {
+          t = a.targetPercent;
+        } else {
+          if (a.accountType === 'Express') {
+            t = settings.payoutExpress || settings.payoutThreshold;
+          } else if (a.accountType === 'Live') {
+            t = settings.payoutLive || settings.payoutThreshold;
+          } else {
+            t = settings.payoutEval || settings.payoutThreshold;
+          }
+        }
+        let widthPercent = 0;
+        if (t > 0) {
+          widthPercent = Math.min(100, Math.abs(a.profit) / t * 100);
+        }
+        widthPercent = widthPercent.toFixed(0);
+        // Determine bar class
+        let barClass;
+        if (a.profit >= 0) {
+          barClass = a.accountType === 'Express' ? 'bar-inner-express' : (a.accountType === 'Live' ? 'bar-inner-live' : 'bar-inner-eval');
+        } else {
+          barClass = 'bar-inner-negative';
+        }
+        chartHTML += `
+          <div class="bar-row">
+            <div class="bar-label">${a.id}</div>
+            <div class="bar-container"><div class="bar-inner ${barClass}" style="width:${widthPercent}%"></div></div>
+            <div class="bar-value">${a.profit.toFixed(1)}%</div>
+          </div>
+        `;
+      });
+      chartHTML += '</div>';
+      // Build summary and AI insights
+      let insights = [];
+      // Compute average target (mean of account-specific or type-specific targets) for comparison
+      let avgTarget = 0;
+      if (accounts.length > 0) {
+        avgTarget = accounts.reduce((s, a) => {
+          let t;
+          if (a.targetPercent !== undefined && a.targetPercent !== null && a.targetPercent !== '') {
+            t = a.targetPercent;
+          } else {
+            if (a.accountType === 'Express') {
+              t = settings.payoutExpress || settings.payoutThreshold;
+            } else if (a.accountType === 'Live') {
+              t = settings.payoutLive || settings.payoutThreshold;
+            } else {
+              t = settings.payoutEval || settings.payoutThreshold;
+            }
+          }
+          return s + t;
+        }, 0) / accounts.length;
+      }
+      // Heuristic: average profit
+      if (avgProfit < 0) {
+        insights.push('Overall average profit is negative; consider reducing risk or parking accounts.');
+      } else if (avgProfit > avgTarget) {
+        insights.push('Average profit exceeds the average payout threshold; many accounts may be ready for payouts.');
+      } else if (avgProfit > 0) {
+        insights.push('Average profit is positive but below the average payout threshold; maintain discipline and let trades play out.');
+      }
+      // Heuristic: accounts near payout overall and by type
+      // Overall and type-specific near payout counts (≥80% of each account's target)
+      const nearPayoutOverall = accounts.filter(a => {
+        // Determine account-specific or fallback target
+        let t;
+        if (a.targetPercent !== undefined && a.targetPercent !== null && a.targetPercent !== '') {
+          t = a.targetPercent;
+        } else {
+          if (a.accountType === 'Express') {
+            t = settings.payoutExpress || settings.payoutThreshold;
+          } else if (a.accountType === 'Live') {
+            t = settings.payoutLive || settings.payoutThreshold;
+          } else {
+            t = settings.payoutEval || settings.payoutThreshold;
+          }
+        }
+        return t > 0 && a.profit >= t * 0.8 && a.profit < t;
+      }).length;
+      if (nearPayoutOverall > 0) {
+        insights.push(`${nearPayoutOverall} account${nearPayoutOverall > 1 ? 's' : ''} are approaching their payout threshold (≥80% of target). Consider pushing them.`);
+      }
+      // Type-specific near payout counts
+      ['Evaluation','Express','Live'].forEach(type => {
+        const count = accounts.filter(a => {
+          if (a.accountType !== type) return false;
+          // Determine account-specific or fallback target
+          let t;
+          if (a.targetPercent !== undefined && a.targetPercent !== null && a.targetPercent !== '') {
+            t = a.targetPercent;
+          } else {
+            if (type === 'Express') {
+              t = settings.payoutExpress || settings.payoutThreshold;
+            } else if (type === 'Live') {
+              t = settings.payoutLive || settings.payoutThreshold;
+            } else {
+              t = settings.payoutEval || settings.payoutThreshold;
+            }
+          }
+          return t > 0 && a.profit >= t * 0.8 && a.profit < t;
+        }).length;
+        if (count > 0) {
+          const label = type.toLowerCase();
+          insights.push(`${count} ${label} account${count > 1 ? 's are' : ' is'} nearing payout (≥80% of target).`);
+        }
+      });
+      // Heuristic: many accounts with negative profit
+      const negativeCount = accounts.filter(a => a.profit < 0).length;
+      if (negativeCount > accounts.length / 2) {
+        insights.push('More than half of your accounts are in drawdown; review trade strategy and risk settings.');
+      }
+      // Heuristic: evaluation vs express vs live
+      if (avgEval > avgExpress && avgEval > avgLive) {
+        insights.push('Evaluation accounts are performing better on average than Express/Live accounts.');
+      } else if (avgExpress > avgEval && avgExpress > avgLive) {
+        insights.push('Express accounts show the strongest average performance.');
+      } else if (avgLive > avgEval && avgLive > avgExpress) {
+        insights.push('Live accounts have the highest average performance.');
+      }
+      // Flag underperforming types
+      if (avgEval < 0) insights.push('Evaluation accounts have a negative average profit; review strategies for this group.');
+      if (avgExpress < 0) insights.push('Express accounts have a negative average profit; consider revising your approach.');
+      if (avgLive < 0) insights.push('Live accounts have a negative average profit; be cautious with live capital.');
+      // Heuristic: top performer
+      insights.push(`Top performer: ${maxAcc.id} (${maxAcc.profit.toFixed(1)}% profit).`);
+      // Heuristic: bottom performer
+      insights.push(`Bottom performer: ${minAcc.id} (${minAcc.profit.toFixed(1)}% profit).`);
+
+      // Success rates by type (accounts meeting or exceeding their payout target)
+      ['Evaluation','Express','Live'].forEach(type => {
+        const relevant = accounts.filter(a => a.accountType === type);
+        if (relevant.length > 0) {
+          const successes = relevant.filter(a => {
+            // Determine each account's specific target
+            let t;
+            if (a.targetPercent !== undefined && a.targetPercent !== null && a.targetPercent !== '') {
+              t = a.targetPercent;
+            } else {
+              if (a.accountType === 'Express') {
+                t = settings.payoutExpress || settings.payoutThreshold;
+              } else if (a.accountType === 'Live') {
+                t = settings.payoutLive || settings.payoutThreshold;
+              } else {
+                t = settings.payoutEval || settings.payoutThreshold;
+              }
+            }
+            return a.profit >= t;
+          }).length;
+          const rate = Math.round((successes / relevant.length) * 100);
+          const label = type.toLowerCase();
+          insights.push(`${rate}% of ${label} account${relevant.length > 1 ? 's' : ''} have reached their payout target.`);
+        }
+      });
+
+      // Heuristic: predicted weeks to reach target based on current average performance
+      const predictions = [];
+      accounts.forEach(a => {
+        // Only consider accounts with active weeks and positive profit
+        if (a.weeksActive > 0 && a.profit > 0) {
+          // Determine target for this account
+          let t;
+          if (a.targetPercent !== undefined && a.targetPercent !== null && a.targetPercent !== '') {
+            t = a.targetPercent;
+          } else {
+            if (a.accountType === 'Express') {
+              t = settings.payoutExpress || settings.payoutThreshold;
+            } else if (a.accountType === 'Live') {
+              t = settings.payoutLive || settings.payoutThreshold;
+            } else {
+              t = settings.payoutEval || settings.payoutThreshold;
+            }
+          }
+          if (t > a.profit) {
+            const remaining = t - a.profit;
+            const avgPerWeek = a.profit / a.weeksActive;
+            if (avgPerWeek > 0) {
+              const weeksToTarget = remaining / avgPerWeek;
+              predictions.push({ id: a.id, weeks: weeksToTarget });
+            }
+          }
+        }
+      });
+      // Sort predictions by soonest completion
+      predictions.sort((a, b) => a.weeks - b.weeks);
+      if (predictions.length > 0) {
+        const topPred = predictions[0];
+        const rounded = Math.ceil(topPred.weeks);
+        insights.push(`Based on recent performance, account ${topPred.id} may hit its target in approximately ${rounded} week${rounded > 1 ? 's' : ''}.`);
+      }
+      // Build insights HTML
+      let insightsHTML = '<div class="ai-insights"><h3>AI Insights</h3><ul>';
+      insights.forEach(item => {
+        insightsHTML += `<li>${item}</li>`;
+      });
+      insightsHTML += '</ul></div>';
+      // Build type performance section
+      let typePerfHTML = '<div class="type-performance"><h3>Performance by Type</h3>';
+      ['Evaluation','Express','Live'].forEach(type => {
+        // Filter accounts by type
+        const relevant = accounts.filter(a => a.accountType === type);
+        // Average profit for type
+        const avg = relevant.length > 0 ? relevant.reduce((s, a) => s + a.profit, 0) / relevant.length : 0;
+        // Determine average target for this type (account-specific or fallback)
+        let avgTargetType = 0;
+        if (relevant.length > 0) {
+          avgTargetType = relevant.reduce((s, a) => {
+            let t;
+            if (a.targetPercent !== undefined && a.targetPercent !== null && a.targetPercent !== '') {
+              t = a.targetPercent;
+            } else {
+              if (a.accountType === 'Express') {
+                t = settings.payoutExpress || settings.payoutThreshold;
+              } else if (a.accountType === 'Live') {
+                t = settings.payoutLive || settings.payoutThreshold;
+              } else {
+                t = settings.payoutEval || settings.payoutThreshold;
+              }
+            }
+            return s + t;
+          }, 0) / relevant.length;
+        }
+        // Determine bar width relative to average target
+        let avgWidth = 0;
+        if (avgTargetType > 0) {
+          avgWidth = Math.min(100, Math.abs(avg) / avgTargetType * 100);
+        }
+        avgWidth = avgWidth.toFixed(0);
+        // Determine bar class based on profit sign
+        let barClass;
+        if (avg >= 0) {
+          barClass = type === 'Express' ? 'bar-inner-express' : (type === 'Live' ? 'bar-inner-live' : 'bar-inner-eval');
+        } else {
+          barClass = 'bar-inner-negative';
+        }
+        // Compute success rate for this type
+        let rate = 0;
+        if (relevant.length > 0) {
+          const successes = relevant.filter(a => {
+            let t;
+            if (a.targetPercent !== undefined && a.targetPercent !== null && a.targetPercent !== '') {
+              t = a.targetPercent;
+            } else {
+              if (a.accountType === 'Express') {
+                t = settings.payoutExpress || settings.payoutThreshold;
+              } else if (a.accountType === 'Live') {
+                t = settings.payoutLive || settings.payoutThreshold;
+              } else {
+                t = settings.payoutEval || settings.payoutThreshold;
+              }
+            }
+            return a.profit >= t;
+          }).length;
+          rate = Math.round((successes / relevant.length) * 100);
+        }
+        typePerfHTML += `
+          <div class="bar-row">
+            <div class="bar-label">${type}</div>
+            <div class="bar-container"><div class="bar-inner ${barClass}" style="width:${avgWidth}%"></div></div>
+            <div class="bar-value">${avg.toFixed(1)}%</div>
+            <div class="bar-value">${rate}% hit target</div>
+          </div>
+        `;
+      });
+      typePerfHTML += '</div>';
+      // Build pie charts for state and type distributions
+      const stateData = [];
+      const stateLabels = [];
+      const stateColors = ['#F59E0B','#10B981','#EF4444','#6366F1','#8B5CF6','#6B7280'];
+      const stateMap = {
+        'Active/Push': accounts.filter(a => a.state === 'Active' || a.state === 'Push').length,
+        'Parked': accounts.filter(a => a.state === 'Parked').length,
+        'Payout': accounts.filter(a => a.state === 'Payout Secured').length,
+        'Evaluation': accounts.filter(a => a.state === 'Evaluation').length,
+        'Phase 2': accounts.filter(a => a.state === 'Phase 2').length,
+        'Inactive': accounts.filter(a => a.state === 'Inactive').length
+      };
+      Object.entries(stateMap).forEach(([label,count]) => {
+        if (count > 0) {
+          stateLabels.push(label);
+          stateData.push(count);
+        }
+      });
+      const typeData = [];
+      const typeLabels = [];
+      const typeColors = ['#6366F1','#3B82F6','#10B981'];
+      const typeMap = {
+        'Evaluation': accounts.filter(a => a.accountType === 'Evaluation').length,
+        'Express': accounts.filter(a => a.accountType === 'Express').length,
+        'Live': accounts.filter(a => a.accountType === 'Live').length
+      };
+      Object.entries(typeMap).forEach(([label,count]) => {
+        if (count > 0) {
+          typeLabels.push(label);
+          typeData.push(count);
+        }
+      });
+      function createPieChart(data, colors) {
+        const total = data.reduce((a,b) => a + b, 0);
+        let startAngle = 0;
+        const cx = 60, cy = 60, r = 50;
+        let paths = '';
+        data.forEach((val,i) => {
+          const angle = (val / total) * Math.PI * 2;
+          const endAngle = startAngle + angle;
+          const x1 = cx + r * Math.cos(startAngle);
+          const y1 = cy + r * Math.sin(startAngle);
+          const x2 = cx + r * Math.cos(endAngle);
+          const y2 = cy + r * Math.sin(endAngle);
+          const largeArc = angle > Math.PI ? 1 : 0;
+          paths += `<path d="M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${largeArc} 1 ${x2},${y2} Z" fill="${colors[i]}" stroke="#fff" stroke-width="0.5"></path>`;
+          startAngle = endAngle;
+        });
+        return `<svg viewBox="0 0 120 120" width="120" height="120">${paths}</svg>`;
+      }
+      let pieHTML = '<div class="pie-charts">';
+      if (stateData.length > 0) {
+        pieHTML += '<div class="pie-chart">';
+        pieHTML += createPieChart(stateData, stateColors);
+        pieHTML += '<div class="pie-legend">';
+        stateLabels.forEach((label,i) => {
+          pieHTML += `<div class="pie-legend-item"><div class="pie-legend-box" style="background:${stateColors[i]};"></div>${label}</div>`;
+        });
+        pieHTML += '</div></div>';
+      }
+      if (typeData.length > 0) {
+        pieHTML += '<div class="pie-chart">';
+        pieHTML += createPieChart(typeData, typeColors);
+        pieHTML += '<div class="pie-legend">';
+        typeLabels.forEach((label,i) => {
+          pieHTML += `<div class="pie-legend-item"><div class="pie-legend-box" style="background:${typeColors[i]};"></div>${label}</div>`;
+        });
+        pieHTML += '</div></div>';
+      }
+      // Risk-to-reward pie chart: positive vs negative profits
+      const posAmt = accounts.filter(a => a.profit > 0).reduce((s, a) => s + a.profit, 0);
+      const negAmt = accounts.filter(a => a.profit < 0).reduce((s, a) => s + Math.abs(a.profit), 0);
+      if (posAmt > 0 || negAmt > 0) {
+        const rrData = [];
+        const rrColors = ['#10B981','#EF4444'];
+        const rrLabels = [];
+        if (posAmt > 0) {
+          rrData.push(posAmt);
+          rrLabels.push('Positive Profit');
+        }
+        if (negAmt > 0) {
+          rrData.push(negAmt);
+          rrLabels.push('Negative Profit');
+        }
+        pieHTML += '<div class="pie-chart">';
+        pieHTML += createPieChart(rrData, rrColors);
+        pieHTML += '<div class="pie-legend">';
+        rrLabels.forEach((label,i) => {
+          const clr = rrColors[i];
+          pieHTML += `<div class="pie-legend-item"><div class="pie-legend-box" style="background:${clr};"></div>${label}</div>`;
+        });
+        pieHTML += '</div></div>';
+      }
+      pieHTML += '</div>';
+      // Build suggestions list from stored suggestions on each account
+      let suggestionsHTML = '<div class="ai-insights"><h3>Account Suggestions</h3><ul>';
+      accounts.forEach(a => {
+        if (a.suggestion && a.suggestion.trim() !== '') {
+          suggestionsHTML += `<li><strong>${a.id}:</strong> ${a.suggestion}</li>`;
+        }
+      });
+      suggestionsHTML += '</ul></div>';
+      // Combine chart, insights, type performance, suggestions and pie charts
+      container.innerHTML = chartHTML + insightsHTML + suggestionsHTML + typePerfHTML + pieHTML;
+    }
+
+    // Update profit for an account
+    window.updateProfit = function(index, delta) {
+      accounts[index].profit += delta;
+      renderTable();
+    };
+
+    // Move account up in the array
+    window.moveAccountUp = function(index) {
+      if (index <= 0) return;
+      const temp = accounts[index - 1];
+      accounts[index - 1] = accounts[index];
+      accounts[index] = temp;
+      renderTable();
+    };
+
+    // Move account down in the array
+    window.moveAccountDown = function(index) {
+      if (index >= accounts.length - 1) return;
+      const temp = accounts[index + 1];
+      accounts[index + 1] = accounts[index];
+      accounts[index] = temp;
+      renderTable();
+    };
+
+    // Shift startOffset of an account by delta (positive or negative)
+    window.shiftOffset = function(index, delta) {
+      const acc = accounts[index];
+      let newOffset = (acc.startOffset || 0) + delta;
+      if (newOffset < 0) newOffset = 0;
+      acc.startOffset = newOffset;
+      renderTable();
+    };
+
+    // Change state via dropdown selection
+    window.changeStateSelect = function(event, index) {
+      const newState = event.target.value;
+      const acc = accounts[index];
+      const prevState = acc.state;
+      acc.state = newState;
+      // If reactivating from parked or payout, reset weeksActive
+      if ((prevState === 'Parked' || prevState === 'Payout Secured') && (newState === 'Active' || newState === 'Push')) {
+        acc.weeksActive = 0;
+      }
+      renderTable();
+    };
+
+    // Delete an account
+    window.deleteAccount = function(index) {
+      const acc = accounts[index];
+      if (confirm('Delete account ' + acc.id + '?')) {
+        accounts.splice(index, 1);
+        renderTable();
+      }
+    };
+
+    // Begin editing an account
+    window.editAccount = function(index) {
+      accounts[index].editing = true;
+      renderTable();
+    };
+
+    // Handle field changes during editing
+    window.editField = function(event, index, field) {
+      let value = event.target.value;
+      // Convert numeric fields
+      if (field === 'funding' || field === 'profit' || field === 'weeksActive' || field === 'startOffset' || field === 'targetPercent' || field === 'evalTarget' || field === 'evalCost') {
+        value = parseFloat(value);
+        if (isNaN(value)) value = 0;
+      }
+      accounts[index][field] = value;
+    };
+
+    // Save edits
+    window.saveEdit = function(index) {
+      const acc = accounts[index];
+      // Prevent duplicate IDs
+      const duplicates = accounts.some((a, i) => i !== index && a.id === acc.id);
+      if (duplicates) {
+        alert('Another account with this ID already exists');
+        return;
+      }
+      acc.editing = false;
+      renderTable();
+    };
+
+    // Cancel edits
+    window.cancelEdit = function(index) {
+      // Reset editing flag without saving changes
+      accounts[index].editing = false;
+      // Optionally reload from storage if needed
+      renderTable();
+    };
+
+    // Change state for an account
+    window.changeState = function(index) {
+      const acc = accounts[index];
+      const newState = prompt('Enter new state for account ' + acc.id + ' (Evaluation, Active, Push, Parked, Payout Secured, Phase 2, Inactive):', acc.state);
+      const valid = ['Evaluation','Active','Push','Parked','Payout Secured','Phase 2','Inactive'];
+      if (newState && valid.includes(newState)) {
+        // Reset weeksActive if reactivated
+        if ((acc.state === 'Parked' || acc.state === 'Payout Secured') && (newState === 'Active' || newState === 'Push')) {
+          acc.weeksActive = 0;
+        }
+        acc.state = newState;
+        renderTable();
+      } else if (newState) {
+        alert('Invalid state');
+      }
+    };
+
+    // Initialize from saved settings and data, if any
+    (function init() {
+      const storedSet = localStorage.getItem('propSettings');
+      if (storedSet) {
+        const s = JSON.parse(storedSet);
+        document.getElementById('setting-risk').value = s.risk;
+        document.getElementById('setting-payout').value = s.payoutThreshold;
+        document.getElementById('setting-payout-eval').value = s.payoutEval !== undefined ? s.payoutEval : s.payoutThreshold;
+        document.getElementById('setting-payout-express').value = s.payoutExpress !== undefined ? s.payoutExpress : s.payoutThreshold;
+        document.getElementById('setting-payout-live').value = s.payoutLive !== undefined ? s.payoutLive : s.payoutThreshold;
+        document.getElementById('setting-active-weeks').value = s.maxWeeks;
+        document.getElementById('setting-off-weeks').value = s.offWeeks;
+        document.getElementById('setting-active-weeks-eval').value = s.activeWeeksEval !== undefined ? s.activeWeeksEval : s.maxWeeks;
+        document.getElementById('setting-off-weeks-eval').value = s.offWeeksEval !== undefined ? s.offWeeksEval : s.offWeeks;
+        document.getElementById('setting-active-weeks-express').value = s.activeWeeksExpress !== undefined ? s.activeWeeksExpress : s.maxWeeks;
+        document.getElementById('setting-off-weeks-express').value = s.offWeeksExpress !== undefined ? s.offWeeksExpress : s.offWeeks;
+        document.getElementById('setting-active-weeks-live').value = s.activeWeeksLive !== undefined ? s.activeWeeksLive : s.maxWeeks;
+        document.getElementById('setting-off-weeks-live').value = s.offWeeksLive !== undefined ? s.offWeeksLive : s.offWeeks;
+        document.getElementById('setting-display-weeks').value = s.displayWeeks;
+        document.getElementById('setting-daily-draw').value = s.maxDaily;
+        document.getElementById('setting-total-draw').value = s.maxTotal;
+      }
+      const storedAcc = localStorage.getItem('propAccounts');
+      if (storedAcc) {
+        accounts = JSON.parse(storedAcc);
+        // Ensure startOffset and editing flags are present
+        accounts.forEach((acc, idx) => {
+          if (acc.startOffset === undefined) acc.startOffset = idx;
+          if (acc.editing === undefined) acc.editing = false;
+          if (acc.accountType === undefined) acc.accountType = 'Evaluation';
+        });
+      }
+      renderTable();
+    })();
+  </script>
+</body>
+</html>
